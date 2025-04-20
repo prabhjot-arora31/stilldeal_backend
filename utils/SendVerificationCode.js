@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "stilldealofficial@gmail.com",
-    pass: "frhs uztn tweu jlvr", // get from Google account settings
+    pass: process.env.SMTP_AUTH_PASS, // get from Google account settings
   },
 });
 

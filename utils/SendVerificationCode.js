@@ -1,19 +1,21 @@
 const nodemailer = require("nodemailer");
-
+const Otp = require("../models/otp.model");
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp.zoho.in",
   port: 465,
   secure: true,
   auth: {
-    user: "stilldealofficial@gmail.com",
-    pass: process.env.SMTP_AUTH_PASS, // get from Google account settings
+    user: "stilldealofficial@zohomail.in",
+    pass: process.env.ZOHO_AUTH_PASS,
   },
 });
 
 const sendVerificationCode = async (email, code) => {
+  await Otp.deleteMany({ email }); // Delete any existing OTPs for the email
+  await new Otp({ email, code }).save(); // Store the new OTP in the database
   console.log("code is:", code);
   const mailOptions = {
-    from: "Still Deal <stilldealofficial@gmail.com>",
+    from: "Still Deal <stilldealofficial@zohomail.in>",
     to: email,
     subject: "Still Deal Verification OTP",
     html: `<!DOCTYPE html>

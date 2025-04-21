@@ -15,6 +15,14 @@ app.use("/api/deals", require("./routes/deal.route"));
 app.use("/api/qrscans", require("./routes/qrscanlog.route"));
 app.use("/api/verification", require("./routes/send_verification_code.route"));
 app.use("/api/verify_email", require("./routes/verify_email.route"));
+app.use(
+  "/api/password_reset_otp",
+  require("./routes/password_reset_otp.route")
+);
+app.use(
+  "/api/password_reset_otp_verify",
+  require("./routes/password_reset_otp_verify.route")
+);
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
 });

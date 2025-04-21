@@ -9,7 +9,6 @@ const UserSchema = new mongoose.Schema(
       minlength: 6,
       match: /.+\@.+\..+/,
     },
-    username: { type: String, unique: true },
     password: { type: String, select: false, minlength: 6, required: true },
     age: { type: Number },
     address: { type: String },

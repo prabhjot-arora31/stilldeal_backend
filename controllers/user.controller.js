@@ -119,6 +119,54 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const addUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id; // assuming you extract this from JWT
+    const {
+      dob,
+      addressLine1,
+      addressLine2,
+      phoneNumber,
+      city,
+      state,
+      pincode,
+      profilePicture,
+      gender,
+    } = req.body;
+
+    // Validate gender (optional if Mongoose schema already enforces it)
+    if (!["Male", "Female", "Other"].includes(gender)) {
+      return res.status(400).json({ message: "Invalid gender value" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        dob,
+        addressLine1,
+        addressLine2,
+        phoneNumber,
+        city,
+        state,
+        pincode,
+        profilePicture,
+        gender,
+      },
+      { new: true, runValidators: true }
+    ).select("-password"); // to avoid returning password field
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "User details updated", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 module.exports = {
   userRegister,
   userLogin,
@@ -126,4 +174,5 @@ module.exports = {
   updateUserProfile,
   deleteUserProfile,
   resetPassword,
+  addUserDetails,
 };

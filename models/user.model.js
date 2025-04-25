@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
       match: /.+\@.+\..+/,
     },
     password: { type: String, select: false, minlength: 6, required: true },
-    dob: { type: Date },
+    dob: { type: String },
     addressLine1: { type: String },
     addressLine2: { type: String },
     phoneNumber: { type: String },

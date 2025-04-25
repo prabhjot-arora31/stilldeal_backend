@@ -123,6 +123,8 @@ const addUserDetails = async (req, res) => {
   try {
     const userId = req.user.id; // assuming you extract this from JWT
     const {
+      email,
+      name,
       dob,
       addressLine1,
       addressLine2,
@@ -139,9 +141,10 @@ const addUserDetails = async (req, res) => {
       return res.status(400).json({ message: "Invalid gender value" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
+    const updatedUser = await User.findOne(
+      { email: email },
       {
+        name,
         dob,
         addressLine1,
         addressLine2,

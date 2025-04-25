@@ -167,7 +167,7 @@ const addUserDetails = async (req, res) => {
       .json({ message: "User details updated", user: updatedUser });
   } catch (error) {
     console.error("Error updating user details:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" , msg: });
   }
 };
 module.exports = {

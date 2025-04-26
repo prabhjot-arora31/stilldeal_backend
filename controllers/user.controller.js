@@ -26,6 +26,7 @@ const userRegister = async (req, res) => {
   }
 };
 const userLogin = async (req, res) => {
+  console.log("inside login");
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email }).select("+password");
@@ -46,6 +47,7 @@ const userLogin = async (req, res) => {
   }
 };
 const getUserProfile = async (req, res) => {
+  console.log("inside profile");
   const userId = req.user.id;
   try {
     const user = await User.findById(userId);
@@ -121,7 +123,8 @@ const resetPassword = async (req, res) => {
 };
 const addUserDetails = async (req, res) => {
   try {
-    const userId = req.user.id; // assuming you extract this from JWT
+    console.log("got in here");
+    // assuming you extract this from JWT
     const {
       email,
       name,
@@ -141,7 +144,7 @@ const addUserDetails = async (req, res) => {
       return res.status(400).json({ message: "Invalid gender value" });
     }
 
-    const updatedUser = await User.findOne(
+    const updatedUser = await User.findOneAndUpdate(
       { email: email },
       {
         name,
@@ -151,6 +154,7 @@ const addUserDetails = async (req, res) => {
         phoneNumber,
         city,
         state,
+        profileCompleted: true,
         pincode,
         profilePicture,
         gender,
@@ -161,13 +165,13 @@ const addUserDetails = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    res
-      .status(200)
-      .json({ message: "User details updated", user: updatedUser });
+    const token = jwt.sign({ id: updatedUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.status(200).json({ message: "User details updated", token });
   } catch (error) {
     console.error("Error updating user details:", error);
-    res.status(500).json({ message: "Server error" , msg: });
+    res.status(500).json({ message: "Server error", msg: error.message });
   }
 };
 module.exports = {

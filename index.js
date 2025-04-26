@@ -27,3 +27,4 @@ app.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
 dbConnect(app, PORT);
+module.exports = app;

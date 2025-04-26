@@ -2,6 +2,7 @@ const sendVerificationCode = require("../utils/SendVerificationCode");
 const otpGenerator = require("otp-generator");
 const { User } = require("../models/user.model");
 const send_verification_code = async (req, res) => {
+  console.log("inside send_verification_code");
   const { email } = req.body;
   // Check if user already exists
   const user = await User.findOne({ email });

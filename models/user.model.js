@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     addressLine1: { type: String },
     addressLine2: { type: String },
     phoneNumber: { type: String },
+    profileCompleted: { type: Boolean, default: false },
     city: { type: String },
     state: { type: String },
     pincode: { type: String },

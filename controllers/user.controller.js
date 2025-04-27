@@ -2,6 +2,9 @@ const User = require("../models/user.model").User;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { verifyToken } = require("../middlewares/auth.middleware");
+const sendLoginSuccess = require("../utils/sendLoginSuccessEmail");
+const sendRegistrationSuccess = require("../utils/sendRegistrationSuccessEmail");
+const sendPasswordResetSuccessfull = require("../utils/PasswordResetSuccessfulEmail");
 const userRegister = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -20,6 +23,7 @@ const userRegister = async (req, res) => {
       expiresIn: "1h",
     });
     res.status(201).json({ message: "User registered successfully", token });
+    sendRegistrationSuccess(newUser.email); // Send registration success email
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -41,6 +45,7 @@ const userLogin = async (req, res) => {
       expiresIn: "1h",
     });
     res.status(200).json({ message: "User logged in successfully", token });
+    sendLoginSuccess(user.email); // Send login success email
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -116,6 +121,7 @@ const resetPassword = async (req, res) => {
     user.password = hashedPassword;
     await user.save();
     res.status(200).json({ message: "Password reset successfully" });
+    sendPasswordResetSuccessfull(user.email); // Send password reset success email
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

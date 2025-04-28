@@ -42,7 +42,7 @@ const userLogin = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "60d",
     });
     res.status(200).json({ message: "User logged in successfully", token });
     sendLoginSuccess(user.email); // Send login success email
@@ -120,7 +120,10 @@ const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
-    res.status(200).json({ message: "Password reset successfully" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "60d",
+    });
+    res.status(200).json({ message: "Password reset successfully", token });
     sendPasswordResetSuccessfull(user.email); // Send password reset success email
   } catch (error) {
     console.error(error);

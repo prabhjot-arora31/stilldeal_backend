@@ -5,7 +5,7 @@ const { BusinessSchema } = require("../models/business.model");
 const { generateBusinessQrCode } = require("../utils/BusinessQrCodeGenerator");
 
 const registerBusiness = async (req, res) => {
-  const { name, email, password, address, phoneNumber } = req.body;
+  const { email, password } = req.body;
   try {
     const existingBusiness = await Business.findOne({ email });
     if (existingBusiness) {
@@ -13,24 +13,71 @@ const registerBusiness = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newBusiness = new Business({
-      name,
       email,
       password: hashedPassword,
-      address,
-      phoneNumber,
     });
     await newBusiness.save();
     const token = jwt.sign({ id: newBusiness._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "60d",
     });
     res
       .status(201)
       .json({ message: "Business registered successfully", token });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", msg: error.message });
   }
 };
+const addBusinessDetails = async (req, res) => {
+  try {
+    console.log("got in here");
+    // assuming you extract this from JWT
+    const {
+      email,
+      name,
+      businessType,
+      businessCategory,
+      businessStartDate,
+      businessWebsite,
+      addressLine1,
+      city,
+      state,
+      pincode,
+      profilePicture,
+      socialLinks,
+    } = req.body;
+
+    const updatedUser = await Business.findOneAndUpdate(
+      { email: email },
+      {
+        name,
+        businessType,
+        businessCategory,
+        businessStartDate,
+        businessWebsite,
+        addressLine1,
+        city,
+        state,
+        pincode,
+        profilePicture,
+        socialLinks,
+      },
+      { new: true, runValidators: true }
+    ).select("-password"); // to avoid returning password field
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    const token = jwt.sign({ id: updatedUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "60d",
+    });
+    res.status(200).json({ message: "Business details updated", token });
+  } catch (error) {
+    console.error("Error updating business details:", error);
+    res.status(500).json({ message: "Server error", msg: error.message });
+  }
+};
+
 const loginBusiness = async (req, res) => {
   const { email, password } = req.body;
   try {

@@ -45,23 +45,33 @@ const addBusinessDetails = async (req, res) => {
       pincode,
       profilePicture,
       socialLinks,
+      location,
     } = req.body;
-
+    const updateFields = {
+      name,
+      businessType,
+      businessCategory,
+      businessStartDate,
+      businessWebsite,
+      addressLine1,
+      city,
+      state,
+      pincode,
+      profilePicture,
+      socialLinks,
+    };
+    const geoLocation = location
+      ? {
+          type: "Point",
+          coordinates: [location.longitude, location.latitude], // GeoJSON expects [lng, lat]
+        }
+      : undefined;
+    if (geoLocation) {
+      updateFields.location = geoLocation;
+    }
     const updatedUser = await Business.findOneAndUpdate(
       { email: email },
-      {
-        name,
-        businessType,
-        businessCategory,
-        businessStartDate,
-        businessWebsite,
-        addressLine1,
-        city,
-        state,
-        pincode,
-        profilePicture,
-        socialLinks,
-      },
+      updateFields,
       { new: true, runValidators: true }
     ).select("-password"); // to avoid returning password field
 
@@ -99,7 +109,7 @@ const loginBusiness = async (req, res) => {
   }
 };
 const getBusinessProfile = async (req, res) => {
-  const businessId = req.params.id;
+  const businessId = req.user;
   try {
     const business = await Business.findById(businessId);
     if (!business) {
@@ -112,7 +122,7 @@ const getBusinessProfile = async (req, res) => {
   }
 };
 const updateBusinessProfile = async (req, res) => {
-  const businessId = req.params.id;
+  const businessId = req.user;
   const { name, email, address, phoneNumber } = req.body;
   try {
     const updatedBusiness = await Business.findByIdAndUpdate(
@@ -130,7 +140,7 @@ const updateBusinessProfile = async (req, res) => {
   }
 };
 const deleteBusinessProfile = async (req, res) => {
-  const businessId = req.params.id;
+  const businessId = req.user;
   try {
     const deletedBusiness = await Business.findByIdAndDelete(businessId);
     if (!deletedBusiness) {
@@ -144,7 +154,7 @@ const deleteBusinessProfile = async (req, res) => {
 };
 const qrCodeGenerate = async (req, res) => {
   try {
-    const res1 = await generateBusinessQrCode(req.params.id);
+    const res1 = await generateBusinessQrCode(req.user);
     res
       .status(200)
       .json({ message: "QR code generated successfully", qrCode: res1 });
@@ -160,4 +170,5 @@ module.exports = {
   updateBusinessProfile,
   deleteBusinessProfile,
   qrCodeGenerate,
+  addBusinessDetails,
 };

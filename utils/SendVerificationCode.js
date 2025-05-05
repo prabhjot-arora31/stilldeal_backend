@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 const Otp = require("../models/otp.model");
 const transporter = require("./transporter"); // Import the transporter configuration
 
-const sendVerificationCode = async (email, code) => {
+const sendVerificationCode = async (email, code, res) => {
   await Otp.deleteMany({ email }); // Delete any existing OTPs for the email
   await new Otp({ email, code }).save(); // Store the new OTP in the database
   console.log("code is:", code);
@@ -59,8 +59,12 @@ const sendVerificationCode = async (email, code) => {
   try {
     await transporter.sendMail(mailOptions);
     console.log("Email sent to", email);
+    res.status(200).json({
+      message: "Verification code sent successfully",
+    });
   } catch (error) {
     console.error("Error sending email:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -57,6 +57,7 @@ const addBusinessDetails = async (req, res) => {
       city,
       state,
       pincode,
+      profileCompleted: true,
       profilePicture,
       socialLinks,
     };
@@ -109,7 +110,9 @@ const loginBusiness = async (req, res) => {
   }
 };
 const getBusinessProfile = async (req, res) => {
-  const businessId = req.user;
+  console.log("I am here");
+  const businessId = req.user.id;
+  console.log("businessId:", businessId);
   try {
     const business = await Business.findById(businessId);
     if (!business) {

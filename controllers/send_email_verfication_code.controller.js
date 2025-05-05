@@ -1,13 +1,20 @@
 const sendVerificationCode = require("../utils/SendVerificationCode");
 const otpGenerator = require("otp-generator");
 const { User } = require("../models/user.model");
+const { Business } = require("../models/business.model");
 const send_verification_code = async (req, res) => {
   console.log("inside send_verification_code");
+  console.log("code trying to send to:", req.params.type);
   const { email } = req.body;
   // Check if user already exists
-  const user = await User.findOne({ email });
-  if (user) {
+  var user;
+  if (req.params.type == "GU") {
+    user = await User.findOne({ email });
+  } else user = await Business.findOne({ email });
+  if (user && req.params.type == "GU") {
     return res.status(400).json({ message: "User already exists" });
+  } else if (user && req.params.type == "business") {
+    return res.status(400).json({ message: "Business already exists" });
   }
   // Generate OTP
   // Generate a 4-digit OTP (numeric only)
@@ -21,8 +28,7 @@ const send_verification_code = async (req, res) => {
 
   // Send verification code
   try {
-    await sendVerificationCode(email, otp);
-    res.status(200).json({ message: "Verification code sent" });
+    await sendVerificationCode(email, otp, res);
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).json({ message: "Error sending verification code" });

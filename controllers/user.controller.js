@@ -53,6 +53,7 @@ const userLogin = async (req, res) => {
 };
 const getUserProfile = async (req, res) => {
   console.log("inside profile");
+  console.log("req.body is:", req.user);
   const userId = req.user.id;
   try {
     const user = await User.findById(userId);

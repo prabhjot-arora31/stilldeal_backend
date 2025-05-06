@@ -14,6 +14,7 @@ const BusinessSchema = new mongoose.Schema({
   businessWebsite: { type: [String] },
   businessCategory: { type: String },
   businessStartDate: { type: String },
+  profilePicture: { type: String },
   profileCompleted: { type: Boolean, default: false },
   loyaltyProgram: {
     pointsPerAmount: { type: Number, default: 0 }, // e.g. 1 point per ₹100

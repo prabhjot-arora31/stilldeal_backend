@@ -46,7 +46,9 @@ const BusinessSchema = new mongoose.Schema({
     gstNumber: { type: String },
     uploadedAt: { type: Date },
   },
-
+  country: { type: String },
+  city: { type: String },
+  state: { type: String },
   socialLinks: [String],
   location: {
     type: {

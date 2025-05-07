@@ -1,3 +1,4 @@
+const { Business } = require("../models/business.model");
 const PasswordResetOTPModel = require("../models/password_reset_otp.model");
 const { User } = require("../models/user.model");
 const nodemailer = require("nodemailer");
@@ -72,10 +73,20 @@ const sendPasswordResetCode = async (email, code) => {
 };
 const passwordResetOtp = async (req, res) => {
   const { email } = req.body;
+  const { type } = req.params;
+  console.log("came here");
   // Check if user already exists
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
+
+  if (type == "GU") {
+    var user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+  } else {
+    var business = await Business.findOne({ email });
+    if (!business) {
+      return res.status(400).json({ message: "Business does not exist" });
+    }
   }
   // Generate OTP
   const otp = Math.floor(1000 + Math.random() * 9000).toString();

@@ -3,5 +3,5 @@ const {
   passwordResetOtp,
 } = require("../controllers/password_reset_otp.controller");
 
-routes.post("/send", passwordResetOtp);
+routes.post("/send/:type", passwordResetOtp);
 module.exports = routes;

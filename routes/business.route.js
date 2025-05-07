@@ -7,6 +7,7 @@ const {
   updateBusinessProfile,
   qrCodeGenerate,
   addBusinessDetails,
+  resetPassword,
 } = require("../controllers/business.controller");
 const { verifyToken } = require("../middlewares/auth.middleware");
 routes.post("/register", registerBusiness);
@@ -15,5 +16,6 @@ routes.post("/add-business-details", addBusinessDetails);
 routes.get("/profile", verifyToken, getBusinessProfile);
 routes.put("/profile", verifyToken, updateBusinessProfile);
 routes.delete("/profile", verifyToken, deleteBusinessProfile);
+routes.post("/reset-password", resetPassword);
 routes.get("/qr-code-generate", verifyToken, qrCodeGenerate);
 module.exports = routes;

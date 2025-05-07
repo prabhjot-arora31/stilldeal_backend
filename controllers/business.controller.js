@@ -28,6 +28,26 @@ const registerBusiness = async (req, res) => {
     res.status(500).json({ message: "Server error", msg: error.message });
   }
 };
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+  try {
+    const business = await Business.findOne({ email });
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    business.password = hashedPassword;
+    await business.save();
+    const token = jwt.sign({ id: business._id }, process.env.JWT_SECRET, {
+      expiresIn: "60d",
+    });
+    res.status(200).json({ message: "Password reset successfully", token });
+    sendPasswordResetSuccessfull(business.email); // Send password reset success email
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 const addBusinessDetails = async (req, res) => {
   try {
     console.log("got in here");
@@ -174,6 +194,7 @@ module.exports = {
   getBusinessProfile,
   updateBusinessProfile,
   deleteBusinessProfile,
+  resetPassword,
   qrCodeGenerate,
   addBusinessDetails,
 };
